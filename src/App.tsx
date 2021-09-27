@@ -98,18 +98,28 @@ const App = () => {
   const updateNestedChild = (key: string[], isChecked: boolean) => {
     if (isChecked) {
       console.log('check:', key);
+      if ('parentChecked') {
+        // find parent in selected check child
+      } else {
+        // find parent in options check child
+      }
     } else {
       console.log('uncheck:', key);
+      if ('parentChecked') {
+        // find parent in selected uncheck child
+      } else {
+        // find parent in options uncheck child
+      }
     }
   }
 
   const onCheck = (checkedKeysValue: any, e: any) => {
-    const {key} = e.node;
+    const keys = e.node.key;
 
-    if (key.length === 1) {
-      updateRootNode(key, e.checked);
+    if (keys.length === 1) {
+      updateRootNode(keys, e.checked);
     } else {
-      updateNestedChild(key, e.checked);
+      updateNestedChild(keys, e.checked);
     }
 
     setCheckedKeys(checkedKeysValue);
