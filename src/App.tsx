@@ -95,11 +95,21 @@ const App = () => {
     }
   }
 
+  const updateNestedChild = (key: string[], isChecked: boolean) => {
+    if (isChecked) {
+      console.log('check:', key);
+    } else {
+      console.log('uncheck:', key);
+    }
+  }
+
   const onCheck = (checkedKeysValue: any, e: any) => {
     const {key} = e.node;
 
     if (key.length === 1) {
       updateRootNode(key, e.checked);
+    } else {
+      updateNestedChild(key, e.checked);
     }
 
     setCheckedKeys(checkedKeysValue);
