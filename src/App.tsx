@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
+import { useImmer } from 'use-immer';
 import 'antd/dist/antd.css';
 import './index.css';
 import { Tree } from 'antd';
@@ -74,7 +75,7 @@ const initialOptions = [
   },
 ];
 
-const selectedOptions = [
+const selectedOptions: any = [
   {
     title: '2',
     key: '2',
@@ -82,15 +83,33 @@ const selectedOptions = [
 ];
 
 const App = () => {
-  const [checkedKeys, setCheckedKeys] = useState(selectedOptions.map(option => option.key));
-  const [selectedTreeData, setSelectedTreeData] = useState(selectedOptions);
+  const [checkedKeys, setCheckedKeys] = useState(selectedOptions.map((option: any) => option.key));
+  const [selectedTreeData, setSelectedTreeData] = useImmer(selectedOptions);
+
+  const selectedTreeDataNormalized = useMemo(() => {
+    return selectedTreeData.reduce((acc: any, currentValue: any) => {
+      const currentValueCopy = { ...currentValue };
+
+      if (currentValueCopy.children?.length) {
+        currentValueCopy.children = currentValueCopy.children.reduce((acc: any, child: any) => {
+          acc[child.key] = child;
+          return acc;
+        }, {});
+      }
+
+      acc[currentValue.key] = currentValueCopy;
+      return acc;
+    }, {});
+  }, [selectedTreeData]);
 
   const updateRootNode = (key: string, isChecked: boolean) => {
     if (isChecked) {
       const selectedOption = initialOptions[key as unknown as number];
-      setSelectedTreeData([...selectedTreeData, selectedOption!]);
+      setSelectedTreeData((draft: any) => {
+        draft.push(selectedOption!)
+      });
     } else {
-      const newTreeData = selectedTreeData.filter((opt) =>  opt.key !== key);
+      const newTreeData = selectedTreeData.filter((opt: any) =>  opt.key !== key);
       setSelectedTreeData(newTreeData);
     }
   }
@@ -100,10 +119,12 @@ const App = () => {
     console.log('parent', parent);
     console.log('child', child);
     console.log('grandChild', grandChild);
+    const parentIsSelected = selectedTreeDataNormalized[parent];
+
     if (isChecked) {
       console.log('check:', key);
-      if ('parentChecked') {
-        // find parent in selected check child
+      if (parentIsSelected) {
+        parentIsSelected[child]
       } else {
         // find parent in options check child
       }
