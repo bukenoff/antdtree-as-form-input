@@ -103,7 +103,9 @@ const App = () => {
       } else {
         // find parent in options check child
       }
-    } else {
+    }
+
+    if (!isChecked) {
       console.log('uncheck:', key);
       if ('parentChecked') {
         // find parent in selected uncheck child
