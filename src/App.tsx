@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Formik } from 'formik';
 import 'antd/dist/antd.css';
 import './index.css';
 import { Tree } from 'antd';
@@ -92,61 +91,36 @@ const App = () => {
       setSelectedTreeData([...selectedTreeData, selectedOption!]);
     } else {
       const newTreeData = selectedTreeData.filter((opt) =>  opt.key !== key);
-      console.log('newTreeData', newTreeData)
       setSelectedTreeData(newTreeData);
     }
   }
 
-  // const updateFirstChildNode = (key: string) => {
-  //   return null;
-  // }
-
-  // const updateFirstChildNode = (key: string) => {
-    
-  // }
-
   const onCheck = (checkedKeysValue: any, e: any) => {
-    console.log('checkedKeysValue', checkedKeysValue);
-    console.log('e', e);
     const {key} = e.node;
 
     if (key.length === 1) {
       updateRootNode(key, e.checked);
     }
 
-
-
     setCheckedKeys(checkedKeysValue);
   };
 
+  const handleSubmit = (e: any) => {
+    e.preventDefault();
+    console.log('@@@@@@@');
+    console.log('selectedTreeData', selectedTreeData);
+  }
+
   return (
-    <Formik
-       initialValues={{ treeData: initialOptions }}
-       onSubmit={(values, { setSubmitting }) => {
-         alert(JSON.stringify(selectedTreeData));
-       }}
-     >
-       {({
-         values,
-         errors,
-         touched,
-         handleChange,
-         handleBlur,
-         handleSubmit,
-         isSubmitting,
-         /* and other goodies */
-       }) => (
-          <form onSubmit={handleSubmit}>
-            <Tree
-              checkable
-              onCheck={onCheck}
-              checkedKeys={checkedKeys}
-              treeData={values.treeData}
-            />
-            <button type="submit">submit</button>
-          </form>
-        )}
-    </Formik>
+    <form onSubmit={handleSubmit}>
+      <Tree
+        checkable
+        onCheck={onCheck}
+        checkedKeys={checkedKeys}
+        treeData={initialOptions}
+      />
+        <button type="submit">submit</button>
+    </form>
   );
 };
 
