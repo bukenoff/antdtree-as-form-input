@@ -95,7 +95,11 @@ const App = () => {
     }
   }
 
-  const updateNestedChild = (key: string[], isChecked: boolean) => {
+  const updateNestedChild = (key: string, isChecked: boolean) => {
+    const [parent, child, grandChild] = key.split('-');
+    console.log('parent', parent);
+    console.log('child', child);
+    console.log('grandChild', grandChild);
     if (isChecked) {
       console.log('check:', key);
       if ('parentChecked') {
