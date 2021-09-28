@@ -8,70 +8,85 @@ const initialOptions = [
   {
     title: '0',
     key: '0',
+    parentKey: null,
     children: [
       {
         title: '0-0',
         key: '0-0',
+        parentKey: '0',
         children: [
           {
             title: '0-0-0',
             key: '0-0-0',
+            parentKey: '0-0',
           },
           {
             title: '0-0-1',
             key: '0-0-1',
+            parentKey: '0-0',
           },
           {
             title: '0-0-2',
             key: '0-0-2',
+            parentKey: '0-0',
           },
         ],
       },
       {
         title: '0-1',
         key: '0-1',
+        parentKey: '0',
         children: [
           {
             title: '0-1-0',
             key: '0-1-0',
+            parentKey: '0-1',
           },
           {
             title: '0-1-1',
             key: '0-1-1',
+            parentKey: '0-1',
           },
           {
             title: '0-1-2',
             key: '0-1-2',
+            parentKey: '0-1',
           },
         ],
       },
       {
         title: '0-2',
         key: '0-2',
+        parentKey: '0',
       },
     ],
   },
   {
     title: '1',
     key: '1',
+    parentKey: null,
     children: [
       {
         title: '1-0',
         key: '1-0',
+        parentKey: '1',
       },
       {
         title: '1-1',
         key: '1-1',
+        parentKey: '1',
       },
       {
         title: '1-2',
         key: '1-2',
+        parentKey: '1',
       },
     ],
   },
   {
     title: '2',
     key: '2',
+    parentKey: null,
   },
 ];
 
@@ -82,29 +97,39 @@ const selectedOptions: any = [
   },
 ];
 
+const mapDataToTrees = (data: any) => {
+  const categories: Record<string, any> = {};
+  const subcategories: Record<string, any> = {};
+  const assignments: Record<string, any> = {};
+
+  data.forEach((dataItem: any) => {
+    categories[dataItem.key] = dataItem;
+
+    if (categories[dataItem.key].children?.length) {
+      categories[dataItem.key].children.forEach((item: any) => {
+        subcategories[item.key] = item;
+
+        if (subcategories[item.key].children?.length) {
+          subcategories[item.key].children.forEach((assignment: any) => {
+            assignments[assignment.key] = assignment;
+          })
+        }
+      })
+    }
+  })
+
+  return [categories, subcategories, assignments];
+}
+
+const [categories, subcategories, assignments] = mapDataToTrees(initialOptions);
+
 const App = () => {
   const [checkedKeys, setCheckedKeys] = useState(selectedOptions.map((option: any) => option.key));
   const [selectedTreeData, setSelectedTreeData] = useImmer(selectedOptions);
 
-  const selectedTreeDataNormalized = useMemo(() => {
-    return selectedTreeData.reduce((acc: any, currentValue: any) => {
-      const currentValueCopy = { ...currentValue };
-
-      if (currentValueCopy.children?.length) {
-        currentValueCopy.children = currentValueCopy.children.reduce((acc: any, child: any) => {
-          acc[child.key] = child;
-          return acc;
-        }, {});
-      }
-
-      acc[currentValue.key] = currentValueCopy;
-      return acc;
-    }, {});
-  }, [selectedTreeData]);
-
   const updateRootNode = (key: string, isChecked: boolean) => {
     if (isChecked) {
-      const selectedOption = initialOptions[key as unknown as number];
+      const selectedOption = categories[key as unknown as number];
       setSelectedTreeData((draft: any) => {
         draft.push(selectedOption!)
       });
@@ -114,39 +139,23 @@ const App = () => {
     }
   }
 
-  const updateNestedChild = (key: string, isChecked: boolean) => {
-    const [parent, child, grandChild] = key.split('-');
-    console.log('parent', parent);
-    console.log('child', child);
-    console.log('grandChild', grandChild);
-    const parentIsSelected = selectedTreeDataNormalized[parent];
-
-    if (isChecked) {
-      console.log('check:', key);
-      if (parentIsSelected) {
-        parentIsSelected[child]
-      } else {
-        // find parent in options check child
-      }
-    }
-
-    if (!isChecked) {
-      console.log('uncheck:', key);
-      if ('parentChecked') {
-        // find parent in selected uncheck child
-      } else {
-        // find parent in options uncheck child
-      }
-    }
-  }
-
   const onCheck = (checkedKeysValue: any, e: any) => {
     const keys = e.node.key;
+    const isCategoryChecked = categories[keys];
+    const isSubCategoryChecked = subcategories[keys];
+    const isAssignmentChecked = assignments[keys];
 
-    if (keys.length === 1) {
+    if (isCategoryChecked) {
+      console.log('category checked');
       updateRootNode(keys, e.checked);
-    } else {
-      updateNestedChild(keys, e.checked);
+    }
+
+    if (isSubCategoryChecked) {
+      console.log('subcategory checked');
+    }
+
+    if (isAssignmentChecked) {
+      console.log('assignment checked');
     }
 
     setCheckedKeys(checkedKeysValue);
