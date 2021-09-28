@@ -125,6 +125,7 @@ const [categories, subcategories, assignments] = mapDataToTrees(initialOptions);
 
 const App = () => {
   const [checkedKeys, setCheckedKeys] = useState(selectedOptions.map((option: any) => option.key));
+  const [halfCheckedKeys, setHaldCheckedKeys] = useState<string[]>([]);
   const [selectedTreeData, setSelectedTreeData] = useImmer(selectedOptions);
 
   const updateRootNode = (key: string, isChecked: boolean) => {
@@ -159,6 +160,7 @@ const App = () => {
     }
 
     setCheckedKeys(checkedKeysValue);
+    setHaldCheckedKeys(e.node.halfCheckedKeys);
   };
 
   const handleSubmit = (e: any) => {
