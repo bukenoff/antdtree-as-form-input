@@ -1,19 +1,20 @@
 import { Tree } from 'antd';
-import React, { useCallback, useState } from 'react';
+import React, { FC, FormEventHandler, useCallback, useState } from 'react';
 import 'antd/dist/antd.css';
 import './index.css';
 import { initialOptions } from './const';
 import { getTreeByKeys } from './utils';
+import { TreeStructure } from './models';
 
-const App = () => {
+const App: FC = () => {
   const [checkedKeys, setCheckedKeys] = useState<string[]>([]);
-  const [selectedTreeData, setSelectedTreeData] = useState([]);
+  const [selectedTreeData, setSelectedTreeData] = useState<TreeStructure[]>([]);
 
   const onCheck = useCallback((checkedKeysValue) => {
     setCheckedKeys(checkedKeysValue);
   }, []);
 
-  const handleSubmit = useCallback((e: any) => {
+  const handleSubmit: FormEventHandler = useCallback((e) => {
     e.preventDefault();
     const value = getTreeByKeys(checkedKeys, initialOptions);
     setSelectedTreeData(value);

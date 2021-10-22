@@ -1,3 +1,5 @@
+import { TreeStructure } from "./models";
+
 export const normalizeKeys = (keys: string[]) =>
     keys.reduce((acc: Record<string, boolean>, key) => {
         acc[key] = true;
@@ -5,8 +7,8 @@ export const normalizeKeys = (keys: string[]) =>
         return acc;
     }, {});
 
-export const getTreeByKeysProcess = (normalizedKeys: any, originalTree: any) =>
-    originalTree.reduce((acc: any, treeItem: any) => {
+export const getTreeByKeysProcess = (normalizedKeys: Record<string, boolean>, originalTree: TreeStructure[]) =>
+    originalTree.reduce((acc: TreeStructure[], treeItem: any) => {
         if (normalizedKeys[treeItem.key]) {
             acc.push(treeItem);
         } else if (treeItem.children) {
@@ -23,5 +25,5 @@ export const getTreeByKeysProcess = (normalizedKeys: any, originalTree: any) =>
         return acc;
     }, []);
 
-export const getTreeByKeys = (keys: string[], originalTree: any) =>
+export const getTreeByKeys = (keys: string[], originalTree: TreeStructure[]) =>
     getTreeByKeysProcess(normalizeKeys(keys), originalTree);
