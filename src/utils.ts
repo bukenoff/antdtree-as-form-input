@@ -8,7 +8,7 @@ export const normalizeKeys = (keys: string[]) =>
     }, {});
 
 export const getTreeByKeysProcess = (normalizedKeys: Record<string, boolean>, originalTree: TreeStructure[]) =>
-    originalTree.reduce((acc: TreeStructure[], treeItem: any) => {
+    originalTree.reduce((acc: TreeStructure[], treeItem) => {
         if (normalizedKeys[treeItem.key]) {
             acc.push(treeItem);
         } else if (treeItem.children) {
