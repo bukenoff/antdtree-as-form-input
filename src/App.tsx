@@ -90,77 +90,12 @@ const initialOptions = [
   },
 ];
 
-const selectedOptions: any = [
-  {
-    title: '2',
-    key: '2',
-  },
-];
-
-const mapDataToTrees = (data: any) => {
-  const categories: Record<string, any> = {};
-  const subcategories: Record<string, any> = {};
-  const assignments: Record<string, any> = {};
-
-  data.forEach((dataItem: any) => {
-    categories[dataItem.key] = dataItem;
-
-    if (categories[dataItem.key].children?.length) {
-      categories[dataItem.key].children.forEach((item: any) => {
-        subcategories[item.key] = item;
-
-        if (subcategories[item.key].children?.length) {
-          subcategories[item.key].children.forEach((assignment: any) => {
-            assignments[assignment.key] = assignment;
-          })
-        }
-      })
-    }
-  })
-
-  return [categories, subcategories, assignments];
-}
-
-const [categories, subcategories, assignments] = mapDataToTrees(initialOptions);
-
 const App = () => {
-  const [checkedKeys, setCheckedKeys] = useState(selectedOptions.map((option: any) => option.key));
-  const [halfCheckedKeys, setHaldCheckedKeys] = useState<string[]>([]);
-  const [selectedTreeData, setSelectedTreeData] = useImmer(selectedOptions);
-
-  const updateRootNode = (key: string, isChecked: boolean) => {
-    if (isChecked) {
-      const selectedOption = categories[key as unknown as number];
-      setSelectedTreeData((draft: any) => {
-        draft.push(selectedOption!)
-      });
-    } else {
-      const newTreeData = selectedTreeData.filter((opt: any) =>  opt.key !== key);
-      setSelectedTreeData(newTreeData);
-    }
-  }
+  const [checkedKeys, setCheckedKeys] = useState([]);
+  const [selectedTreeData, setSelectedTreeData] = useImmer(initialOptions);
 
   const onCheck = (checkedKeysValue: any, e: any) => {
-    const keys = e.node.key;
-    const isCategoryChecked = categories[keys];
-    const isSubCategoryChecked = subcategories[keys];
-    const isAssignmentChecked = assignments[keys];
-
-    if (isCategoryChecked) {
-      console.log('category checked');
-      updateRootNode(keys, e.checked);
-    }
-
-    if (isSubCategoryChecked) {
-      console.log('subcategory checked');
-    }
-
-    if (isAssignmentChecked) {
-      console.log('assignment checked');
-    }
-
     setCheckedKeys(checkedKeysValue);
-    setHaldCheckedKeys(e.node.halfCheckedKeys);
   };
 
   const handleSubmit = (e: any) => {
@@ -175,7 +110,7 @@ const App = () => {
         checkable
         onCheck={onCheck}
         checkedKeys={checkedKeys}
-        treeData={initialOptions}
+        treeData={selectedTreeData}
       />
         <button type="submit">submit</button>
     </form>
